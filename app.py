@@ -4,6 +4,15 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
 from datetime import datetime
 
+def init_db():
+    """Create database if it doesn't exist"""
+    import os
+    if not os.path.exists(app.config['DATABASE']):
+        db = get_db()
+        with open('init.sql', 'r') as f:
+            db.executescript(f.read())
+        db.close()
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-change-this'
 app.config['DATABASE'] = 'bookstore.db'
@@ -341,6 +350,9 @@ def update_order_status(order_id):
     db.close()
     flash('Order status updated.')
     return redirect(url_for('admin_dashboard'))
+
+# Initialize database on startup
+init_db()
 
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0', port=5000)
