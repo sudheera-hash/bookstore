@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Register — BookStore{% endblock %}
+
+{% block content %}
+<h1 style="text-align:center;">Create Account</h1>
+
+<div class="form-card">
+  <form method="POST" action="{{ url_for('register') }}">
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" name="username" placeholder="johndoe" required />
+    </div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" name="email" placeholder="you@example.com" required />
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" name="password" placeholder="••••••••" required />
+    </div>
+    <button type="submit" class="btn btn-green" style="width:100%; padding:0.75rem;">
+      Create Account
+    </button>
+  </form>
+
+  <p style="text-align:center; margin-top:1.25rem; font-size:0.88rem; color:#888;">
+    Already have an account?
+    <a href="{{ url_for('login') }}" style="color:#3B6D11;">Login here</a>
+  </p>
+</div>
+{% endblock %}

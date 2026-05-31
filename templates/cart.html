@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}My Cart — BookStore{% endblock %}
+
+{% block content %}
+<h1>My Cart</h1>
+
+{% if items %}
+  <table>
+    <thead>
+      <tr>
+        <th>Book</th>
+        <th>Author</th>
+        <th>Price</th>
+        <th>Qty</th>
+        <th>Subtotal</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+        <tr>
+          <td>
+            <a href="{{ url_for('book', id=item.book.id) }}" style="text-decoration:none; color:#2c2c2a; font-weight:500;">
+              {{ item.book.title }}
+            </a>
+          </td>
+          <td style="color:#888;">{{ item.book.author }}</td>
+          <td>${{ "%.2f"|format(item.book.price) }}</td>
+          <td>{{ item.qty }}</td>
+          <td>${{ "%.2f"|format(item.subtotal) }}</td>
+          <td>
+            <form method="POST" action="{{ url_for('remove_from_cart', book_id=item.book.id) }}">
+              <button type="submit" class="btn btn-red">Remove</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="summary-box">
+    <span class="total">Total: ${{ "%.2f"|format(total) }}</span>
+    <a href="{{ url_for('checkout') }}" class="btn btn-green">Proceed to Checkout</a>
+  </div>
+
+{% else %}
+  <div style="text-align:center; margin-top:4rem; color:#888;">
+    <p style="font-size:3rem;">🛒</p>
+    <p style="margin-top:1rem;">Your cart is empty.</p>
+    <a href="{{ url_for('index') }}" class="btn btn-dark" style="margin-top:1rem;">Browse Books</a>
+  </div>
+{% endif %}
+
+{% endblock %}

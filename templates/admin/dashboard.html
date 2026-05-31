@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard — BookStore{% endblock %}
+
+{% block content %}
+<h1>Admin Dashboard</h1>
+
+<!-- Stats -->
+<div class="stat-grid">
+  <div class="stat-card">
+    <p class="label">Total Books</p>
+    <p class="value">{{ books|length }}</p>
+  </div>
+  <div class="stat-card">
+    <p class="label">Total Orders</p>
+    <p class="value">{{ orders|length }}</p>
+  </div>
+  <div class="stat-card">
+    <p class="label">Total Revenue</p>
+    <p class="value">${{ "%.2f"|format(total_revenue) }}</p>
+  </div>
+  <div class="stat-card">
+    <p class="label">Pending Orders</p>
+    <p class="value">{{ orders|selectattr('status','equalto','pending')|list|length }}</p>
+  </div>
+</div>
+
+<!-- Books table -->
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+  <h2>Books</h2>
+  <a href="{{ url_for('add_book') }}" class="btn btn-green">+ Add Book</a>
+</div>
+
+<table style="margin-bottom:2.5rem;">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Title</th>
+      <th>Author</th>
+      <th>Genre</th>
+      <th>Price</th>
+      <th>Stock</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for book in books %}
+      <tr>
+        <td style="color:#888;">#{{ book.id }}</td>
+        <td>
+          <a href="{{ url_for('book', id=book.id) }}" style="text-decoration:none; color:#2c2c2a; font-weight:500;">
+            {{ book.title }}
+          </a>
+        </td>
+        <td style="color:#888;">{{ book.author }}</td>
+        <td>{{ book.genre }}</td>
+        <td>${{ "%.2f"|format(book.price) }}</td>
+        <td>
+          {% if book.stock > 5 %}
+            <span style="color:#3B6D11; font-weight:500;">{{ book.stock }}</span>
+          {% elif book.stock > 0 %}
+            <span style="color:#854F0B; font-weight:500;">{{ book.stock }} (low)</span>
+          {% else %}
+            <span style="color:#A32D2D; font-weight:500;">Out of stock</span>
+          {% endif %}
+        </td>
+        <td>
+          <form method="POST" action="{{ url_for('delete_book', id=book.id) }}"
+                onsubmit="return confirm('Delete {{ book.title }}?')">
+            <button type="submit" class="btn btn-red">Delete</button>
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<!-- Orders table -->
+<h2 style="margin-bottom:1rem;">Recent Orders</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Order ID</th>
+      <th>User</th>
+      <th>Total</th>
+      <th>Status</th>
+      <th>Date</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for order in orders %}
+      <tr>
+        <td style="color:#888;">#{{ order.id }}</td>
+        <td>{{ order.user.username }}</td>
+        <td style="font-weight:500; color:#3B6D11;">${{ "%.2f"|format(order.total_price) }}</td>
+        <td><span class="badge badge-{{ order.status }}">{{ order.status.capitalize() }}</span></td>
+        <td style="color:#888;">{{ order.created_at.strftime('%d %b %Y') }}</td>
+        <td>
+          <form method="POST" action="{{ url_for('update_order_status', order_id=order.id) }}">
+            <select name="status" onchange="this.form.submit()" style="padding:4px 8px; border-radius:6px; border:1px solid #ddd; font-size:0.85rem;">
+              <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>Pending</option>
+              <option value="shipped" {% if order.status == 'shipped' %}selected{% endif %}>Shipped</option>
+            </select>
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}
