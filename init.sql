@@ -46,7 +46,7 @@ CREATE TABLE wishlist (
 );
 
 INSERT INTO users (username, email, password_hash, is_admin) 
-VALUES ('admin', 'admin@bookstore.com', 'pbkdf2:sha256:600000$xyzzz$abcdef123456', 1);
+VALUES ('admin', 'admin@bookstore.com', 'scrypt:32768:8:1$M4Ryi5nBaY01Oits$e0a8624f122ba66569b598df0f237d828dc9a428f0a5cfd3e269aad9a77389c8c55578bd4b32e362cc69fc26cd85651f8ee02dc8ad3d647464ee44d185feab88', 1);
 
 INSERT INTO books (title, author, genre, price, stock, description, cover_url) VALUES
 ('The Great Gatsby', 'F. Scott Fitzgerald', 'Fiction', 9.99, 20, 'A story of wealth, love, and the American Dream in the 1920s.', 'https://covers.openlibrary.org/b/id/8432895-L.jpg'),
